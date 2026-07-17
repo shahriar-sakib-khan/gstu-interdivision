@@ -55,7 +55,7 @@ export default function StandingsTable({ standings }: { standings: Standing[] })
       </div>
       <div className="px-4 py-3 border-t border-gray-100 dark:border-[#3c4043] flex items-center gap-2 text-xs text-gray-500 dark:text-[#9aa0a6]">
         <div className="w-2 h-2 rounded-sm bg-emerald-500"></div>
-        <span>Top 2 teams qualify for the Final</span>
+        <span>Top 2 teams qualify for the Semi-Finals</span>
       </div>
     </div>
   );

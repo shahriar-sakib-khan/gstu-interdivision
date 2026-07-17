@@ -15,9 +15,19 @@ const renderFootballs = (count: number) => {
 
 export default function MatchCard({ match }: { match: Match }) {
   const isFullTime = match.status === 'FULL_TIME';
+  const isKnockout = ['13', '14', '15'].includes(match.id);
+  const isFinal = match.id === '15';
+  const knockoutLabel = isFinal ? '🏆 FINAL' : `Semi-Final ${match.id === '13' ? '1' : '2'}`;
 
   return (
-    <div className="bg-white dark:bg-[#303134] rounded-2xl border border-gray-200 dark:border-[#3c4043] overflow-hidden mb-4 hover:scale-[1.01] hover:shadow-md transition-all">
+    <div className={`bg-white dark:bg-[#303134] rounded-2xl border ${isFinal ? 'border-amber-400 dark:border-amber-500 shadow-md shadow-amber-500/10' : isKnockout ? 'border-blue-400 dark:border-blue-500 shadow-md shadow-blue-500/10' : 'border-gray-200 dark:border-[#3c4043]'} overflow-hidden mb-4 hover:scale-[1.01] hover:shadow-lg transition-all`}>
+      {/* Knockout Banner */}
+      {isKnockout && (
+        <div className={`text-center py-1.5 text-xs font-bold text-white uppercase tracking-wider ${isFinal ? 'bg-amber-500 dark:bg-amber-600' : 'bg-blue-500 dark:bg-blue-600'}`}>
+          {knockoutLabel}
+        </div>
+      )}
+      
       {/* Top Header */}
       <div className="px-4 py-3 flex justify-between items-center text-xs text-gray-500 dark:text-[#9aa0a6] border-b border-gray-100 dark:border-[#3c4043]">
         <span>{match.time !== 'TBD' ? match.time : 'Time TBD'}</span>

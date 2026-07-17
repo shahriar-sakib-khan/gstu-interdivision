@@ -21,7 +21,7 @@ export const MATCHES: Match[] = [
     status: 'FULL_TIME',
     homeScore: 1,
     awayScore: 0,
-    homeGoals: [{ playerName: 'Someone (OG)', count: 1 }],
+    homeGoals: [{ playerName: 'Sagor (OG)', count: 1 }],
     motm: 'Sakib',
   },
   {
@@ -30,7 +30,10 @@ export const MATCHES: Match[] = [
     time: '3:30 PM',
     homeTeam: 'Khulna',
     awayTeam: 'Barishal',
-    status: 'SCHEDULED',
+    status: 'FULL_TIME',
+    homeScore: 5,
+    awayScore: 0,
+    motm: 'Jubayer',
   },
   {
     id: '3',
@@ -38,7 +41,14 @@ export const MATCHES: Match[] = [
     time: '4:30 PM',
     homeTeam: 'Mymensingh',
     awayTeam: 'Rajshahi',
-    status: 'SCHEDULED',
+    status: 'FULL_TIME',
+    homeScore: 0,
+    awayScore: 2,
+    awayGoals: [
+      { playerName: 'Sakib', count: 1 },
+      { playerName: 'Jahir (OG)', count: 1 }
+    ],
+    motm: 'Sakib',
   },
   {
     id: '4',
@@ -141,14 +151,16 @@ export const MATCHES: Match[] = [
 export const STANDINGS: Standing[] = [
   { team: 'Rangpur', played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 1, goalsAgainst: 0, goalDifference: 1, points: 3, group: 'A' },
   { team: 'Sylhet', played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 1, goalDifference: -1, points: 0, group: 'A' },
-  { team: 'Khulna', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'A' },
-  { team: 'Barishal', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'A' },
+  { team: 'Khulna', played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 5, goalsAgainst: 0, goalDifference: 5, points: 3, group: 'A' },
+  { team: 'Barishal', played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 5, goalDifference: -5, points: 0, group: 'A' },
   { team: 'Dhaka', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'B' },
-  { team: 'Rajshahi', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'B' },
+  { team: 'Rajshahi', played: 1, won: 1, drawn: 0, lost: 0, goalsFor: 2, goalsAgainst: 0, goalDifference: 2, points: 3, group: 'B' },
   { team: 'Chattogram', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'B' },
-  { team: 'Mymensingh', played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0, group: 'B' },
+  { team: 'Mymensingh', played: 1, won: 0, drawn: 0, lost: 1, goalsFor: 0, goalsAgainst: 2, goalDifference: -2, points: 0, group: 'B' },
 ];
 
 export const PLAYER_STATS: PlayerStat[] = [
-  { name: 'Sakib', team: 'Rangpur', goals: 0, motms: 1 }
+  { name: 'Sakib', team: 'Rangpur', goals: 0, motms: 1 },
+  { name: 'Jubayer', team: 'Khulna', goals: 0, motms: 1 },
+  { name: 'Sakib', team: 'Rajshahi', goals: 1, motms: 1 }
 ];
