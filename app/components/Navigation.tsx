@@ -3,19 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+const tabs = [
+  { name: 'Matches',      href: '/',           icon: '⚽' },
+  { name: 'Points Table', href: '/standings',   icon: '📋' },
+  { name: 'Stats',        href: '/stats',       icon: '🏅' },
+];
+
 export default function Navigation() {
   const pathname = usePathname();
 
-  const tabs = [
-    { name: 'Matches', href: '/' },
-    { name: 'Points Table', href: '/standings' },
-    { name: 'Stats', href: '/stats' },
-  ];
-
   return (
-    <div className="bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 sticky top-[73px] z-40">
+    <div
+      className="glass-header border-b border-zinc-900/10 dark:border-zinc-100/10 sticky top-[66px] z-40
+                 shadow-sm"
+    >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex space-x-1 py-3 overflow-x-auto scrollbar-hide">
+        <nav className="flex justify-between w-full gap-1 sm:gap-2 py-2 sm:py-2.5 overflow-x-hidden scrollbar-none" aria-label="Main navigation">
           {tabs.map((tab) => {
             const isActive = pathname === tab.href;
             return (
@@ -23,14 +26,16 @@ export default function Navigation() {
                 key={tab.name}
                 href={tab.href}
                 className={`
-                  px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200
-                  ${isActive 
-                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 shadow-sm' 
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10'
+                  flex-1 justify-center flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-semibold
+                  whitespace-nowrap transition-all duration-250 select-none border
+                  ${isActive
+                    ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 shadow-sm'
+                    : 'border-transparent text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200'
                   }
                 `}
               >
-                {tab.name}
+                <span aria-hidden="true" className="text-xs sm:text-[15px] opacity-90">{tab.icon}</span>
+                <span>{tab.name}</span>
               </Link>
             );
           })}

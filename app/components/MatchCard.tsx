@@ -1,100 +1,170 @@
 import { Match } from '../lib/types';
 import { getTeamTextColor } from '../lib/utils';
 
-const FootballIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-    <circle cx="12" cy="12" r="10" fill="white" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M12 7L16 10V15L12 18L8 15V10L12 7Z" fill="currentColor" />
-    <path d="M12 7V2M16 10L20.5 8M16 15L20.5 17M12 18V22M8 15L3.5 17M8 10L3.5 8" stroke="currentColor" strokeWidth="1.5" />
+// ── Football icon ─────────────────────────────────────────────────────────────
+const FootballIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`shrink-0 inline-block ${className}`}
+    aria-hidden="true"
+  >
+    <circle cx="50" cy="50" r="47" stroke="currentColor" strokeWidth="5" fill="none" />
+    <polygon points="50,18 63,30 58,48 42,48 37,30" fill="currentColor" opacity="0.85" />
+    <polygon points="63,30 80,35 78,54 67,61 58,48" fill="currentColor" opacity="0.5" />
+    <polygon points="37,30 42,48 33,61 22,54 20,35" fill="currentColor" opacity="0.5" />
+    <polygon points="58,48 67,61 62,77 38,77 33,61 42,48" fill="currentColor" opacity="0.45" />
   </svg>
 );
 
-const renderFootballs = (count: number) => {
-  return Array(count).fill(0).map((_, i) => <FootballIcon key={i} />);
-};
+// Removed VsBall
 
+const renderFootballs = (count: number) =>
+  Array(count).fill(0).map((_, i) => (
+    <FootballIcon key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-400 dark:text-zinc-500 ml-0.5" />
+  ));
+
+// ── MatchCard ─────────────────────────────────────────────────────────────────
 export default function MatchCard({ match }: { match: Match }) {
   const isFullTime = match.status === 'FULL_TIME';
+  const isLive     = match.status === 'LIVE';
   const isKnockout = ['13', '14', '15'].includes(match.id);
-  const isFinal = match.id === '15';
+  const isFinal    = match.id === '15';
   const knockoutLabel = isFinal ? '🏆 FINAL' : `Semi-Final ${match.id === '13' ? '1' : '2'}`;
 
+  // UI styling distinctions for knockouts
+  const cardBorder = isFinal
+    ? 'border-amber-500/50 dark:border-amber-500/40'
+    : isKnockout
+    ? 'border-zinc-300 dark:border-zinc-600'
+    : 'border-zinc-200 dark:border-zinc-800';
+
+  const cardShadow = isFinal
+    ? 'shadow-lg shadow-amber-500/20 dark:shadow-amber-500/10'
+    : isKnockout
+    ? 'shadow-md hover:shadow-lg'
+    : 'shadow-sm hover:shadow-md hover:shadow-zinc-500/5';
+
+  const cardBackground = isFinal
+    ? 'bg-gradient-to-br from-amber-50/50 via-white to-white dark:from-amber-950/20 dark:via-zinc-950/80 dark:to-zinc-950/80'
+    : isKnockout
+    ? 'bg-gradient-to-br from-zinc-100 via-white to-white dark:from-zinc-900/40 dark:via-zinc-950/80 dark:to-zinc-950/80'
+    : '';
+
   return (
-    <div className={`bg-white dark:bg-[#303134] rounded-2xl border ${isFinal ? 'border-amber-400 dark:border-amber-500 shadow-md shadow-amber-500/10' : isKnockout ? 'border-blue-400 dark:border-blue-500 shadow-md shadow-blue-500/10' : 'border-gray-200 dark:border-[#3c4043]'} overflow-hidden mb-4 hover:scale-[1.01] hover:shadow-lg transition-all`}>
-      {/* Knockout Banner */}
+    <div
+      className={`
+        relative overflow-hidden rounded-2xl border ${cardBorder} ${cardShadow}
+        glass-card transition-all duration-300 card-enter ${cardBackground}
+      `}
+    >
+      {/* ── Knockout banner ── */}
       {isKnockout && (
-        <div className={`text-center py-1.5 text-xs font-bold text-white uppercase tracking-wider ${isFinal ? 'bg-amber-500 dark:bg-amber-600' : 'bg-blue-500 dark:bg-blue-600'}`}>
+        <div className={`text-center py-2 sm:py-2.5 text-[10px] sm:text-[11px] font-bold ${isFinal ? 'bg-amber-500 text-amber-950 dark:bg-amber-500/20 dark:text-amber-200' : 'text-zinc-800 dark:text-zinc-200 bg-zinc-200/50 dark:bg-zinc-800/80'} uppercase tracking-[0.2em]`}>
           {knockoutLabel}
         </div>
       )}
-      
-      {/* Top Header */}
-      <div className="px-4 py-3 flex justify-between items-center text-xs text-gray-500 dark:text-[#9aa0a6] border-b border-gray-100 dark:border-[#3c4043]">
-        <span>{match.time !== 'TBD' ? match.time : 'Time TBD'}</span>
-        <span className="font-medium">
-          {match.status === 'FULL_TIME' ? 'FT' : match.status === 'LIVE' ? <span className="text-red-500 dark:text-red-400">LIVE</span> : match.status}
+
+      {/* ── Card header: time + status ── */}
+      <div className={`px-2.5 sm:px-4 py-1.5 sm:py-2.5 flex justify-between items-center border-b border-zinc-200/60 dark:border-zinc-800/60 ${isKnockout ? 'bg-white/40 dark:bg-zinc-900/20' : ''}`}>
+        <span className="text-xs sm:text-sm font-bold text-zinc-500 dark:text-zinc-400">
+          Match {match.id} &bull; {match.time !== 'TBD' ? match.time : '⏰ TBD'}
         </span>
+
+        {isFullTime ? (
+          <span className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 rounded-full text-xs sm:text-sm font-bold
+            bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300
+            border border-zinc-200 dark:border-zinc-700 uppercase tracking-widest">
+            ✓ FT
+          </span>
+        ) : isLive ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 rounded-full text-xs sm:text-sm font-bold
+            bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400
+            border border-red-200/50 dark:border-red-700/30 uppercase tracking-widest">
+            <span className="live-dot" aria-hidden="true" />
+            LIVE
+          </span>
+        ) : (
+          <span className="text-xs sm:text-sm font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+            Upcoming
+          </span>
+        )}
       </div>
-      
-      {/* Match Content */}
-      <div className="px-4 pb-4 pt-4 flex items-center justify-between">
-        
-        {/* Home Team */}
-        <div className="flex flex-col items-center gap-2 flex-1 justify-center text-center">
-          <span className={`font-bold text-lg sm:text-xl ${getTeamTextColor(match.homeTeam)}`}>{match.homeTeam}</span>
+
+      {/* ── Main match section ── */}
+      <div className="px-2 sm:px-4 py-2 sm:py-5 flex flex-row items-center justify-between gap-1 sm:gap-3">
+        {/* Home team */}
+        <div className="flex-1 flex flex-col items-start text-left min-w-0">
+          <span className={`font-black text-base sm:text-3xl leading-tight break-words ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.homeTeam)}`}>
+            {match.homeTeam}
+          </span>
         </div>
 
-        {/* Center Score or Time */}
-        <div className="flex flex-col items-center justify-center flex-1 shrink-0 px-2">
+        {/* Center: Score or VS */}
+        <div className="flex flex-col items-center justify-center shrink-0 px-1 sm:px-3">
           {isFullTime ? (
-            <div className="flex items-center gap-3 sm:gap-4 text-3xl font-medium text-gray-900 dark:text-[#e8eaed]">
-              <span>{match.homeScore}</span>
-              <span className="text-gray-300 dark:text-[#9aa0a6] text-xl">-</span>
-              <span>{match.awayScore}</span>
+            <div className="flex items-center gap-1 sm:gap-2 score-pop">
+              <span className={`font-display text-3xl sm:text-5xl leading-none text-zinc-800 dark:text-zinc-100 ${isFinal ? 'sm:text-[72px]' : ''}`}>
+                {match.homeScore}
+              </span>
+              <span className="font-display text-xl sm:text-3xl text-zinc-300 dark:text-zinc-700 leading-none">
+                :
+              </span>
+              <span className={`font-display text-3xl sm:text-5xl leading-none text-zinc-800 dark:text-zinc-100 ${isFinal ? 'sm:text-[72px]' : ''}`}>
+                {match.awayScore}
+              </span>
             </div>
           ) : (
-            <div className="text-center">
-              <div className="text-sm font-bold text-gray-400 dark:text-gray-500">VS</div>
+            <div className="flex flex-col items-center gap-1">
+              <span className="font-display text-lg sm:text-2xl text-zinc-400 dark:text-zinc-500 tracking-widest mt-1">
+                VS
+              </span>
             </div>
           )}
         </div>
-        
-        {/* Away Team */}
-        <div className="flex flex-col items-center gap-2 flex-1 justify-center text-center">
-          <span className={`font-bold text-lg sm:text-xl ${getTeamTextColor(match.awayTeam)}`}>{match.awayTeam}</span>
+
+        {/* Away team */}
+        <div className="flex-1 flex flex-col items-end text-right min-w-0">
+          <span className={`font-black text-base sm:text-3xl leading-tight break-words ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.awayTeam)}`}>
+            {match.awayTeam}
+          </span>
         </div>
       </div>
-      
-      {/* Goal Scorers */}
+
+      {/* ── Goal scorers ── */}
       {isFullTime && (match.homeGoals?.length || match.awayGoals?.length) && (
-        <div className="px-4 pb-3 pt-1 flex justify-between">
-          <div className="flex-1 flex flex-col gap-1.5 items-start">
+        <div className="px-2.5 sm:px-4 pb-2 pt-1.5 flex flex-row justify-between gap-2 sm:gap-4 border-t border-zinc-100 dark:border-zinc-800/60">
+          <div className="flex-1 flex flex-col gap-1 sm:gap-1.5 items-start text-left">
             {match.homeGoals?.map((goal, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-gray-700 dark:text-[#e8eaed]">
-                <span className="text-sm">{goal.playerName}</span>
-                <div className="flex gap-0.5 text-gray-800 dark:text-[#202124]">{renderFootballs(goal.count || 1)}</div>
+              <div key={idx} className="flex items-center justify-start gap-1.5 text-zinc-600 dark:text-zinc-400">
+                <span className="text-xs sm:text-sm font-bold">{goal.playerName}</span>
+                <div className="flex gap-0.5">{renderFootballs(goal.count || 1)}</div>
               </div>
             ))}
           </div>
-          <div className="flex-1 flex flex-col gap-1.5 items-end">
+          <div className="flex-1 flex flex-col gap-1 sm:gap-1.5 items-end text-right">
             {match.awayGoals?.map((goal, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-gray-700 dark:text-[#e8eaed]">
-                <span className="text-sm">{goal.playerName}</span>
-                <div className="flex gap-0.5 text-gray-800 dark:text-[#202124]">{renderFootballs(goal.count || 1)}</div>
+              <div key={idx} className="flex items-center justify-end gap-1.5 text-zinc-600 dark:text-zinc-400">
+                <div className="flex gap-0.5">{renderFootballs(goal.count || 1)}</div>
+                <span className="text-xs sm:text-sm font-bold">{goal.playerName}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* MOTM */}
+      {/* ── MOTM ── */}
       {match.motm && (
-        <div className="px-4 pb-4 pt-2 flex justify-center text-xs font-medium">
-          <span className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#202124] text-gray-800 dark:text-[#e8eaed] px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#5f6368]">
-            <svg className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4 pt-1 flex justify-center">
+          <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm
+            border border-zinc-200 dark:border-zinc-800
+            bg-zinc-50 dark:bg-zinc-900">
+            <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-zinc-900 dark:fill-zinc-100 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
             </svg>
-            <span className="text-gray-500 dark:text-[#9aa0a6]">MOTM:</span> {match.motm}
+            <span className="font-semibold text-zinc-500 dark:text-zinc-400">MOTM:</span>
+            <span className="shimmer-gold-text font-bold text-amber-600 dark:text-amber-400">{match.motm}</span>
           </span>
         </div>
       )}

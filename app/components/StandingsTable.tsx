@@ -9,53 +9,119 @@ export default function StandingsTable({ standings }: { standings: Standing[] })
   });
 
   return (
-    <div className="bg-white dark:bg-[#303134] rounded-2xl border border-gray-200 dark:border-[#3c4043] overflow-hidden mb-6 shadow-sm">
+    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 overflow-hidden shadow-sm glass-card mb-6">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 dark:bg-[#202124] border-b border-gray-200 dark:border-[#3c4043]">
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] pl-5">#</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6]">Division</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">MP</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">W</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">D</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">L</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">GF</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">GA</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">GD</th>
-              <th className="px-4 py-3 font-medium text-xs text-gray-500 dark:text-[#9aa0a6] text-center">Pts</th>
+            <tr className="bg-zinc-100/80 dark:bg-zinc-800/50">
+              {['#', 'Division', 'MP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'].map((h) => (
+                <th
+                  key={h}
+                  className={`px-1.5 sm:px-3 py-2 sm:py-3 font-display text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400 tracking-widest uppercase
+                    ${h === '#' ? 'pl-2 sm:pl-4' : ''}
+                    ${!['#', 'Division'].includes(h) ? 'text-center' : ''}
+                  `}
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-[#3c4043]">
-            {sortedStandings.map((team, idx) => (
-              <tr key={team.team} className="hover:bg-gray-50 dark:hover:bg-[#3c4043] transition-colors">
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#9aa0a6] relative">
-                  {idx < 2 && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500" />
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
+            {sortedStandings.map((team, idx) => {
+              const isFirst = idx === 0;
+              const qualifies = idx < 2; // top 2 qualify
+
+              // Row background tint
+              const rowBg = qualifies
+                ? 'bg-zinc-50/50 dark:bg-zinc-800/30'
+                : '';
+
+              return (
+                <tr
+                  key={team.team}
+                  className={`transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${rowBg}`}
+                >
+                  {/* Rank */}
+                  <td className="px-1.5 sm:px-3 py-2 sm:py-3 whitespace-nowrap relative pl-4">
+                    {/* Qualifying stripe */}
+                    {qualifies && (
+                      <div
+                        className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full ${isFirst ? 'bg-zinc-900 dark:bg-zinc-100' : 'bg-zinc-400'}`}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span
+                      className={`font-display text-base sm:text-lg pl-1 ${
+                        isFirst
+                          ? 'text-zinc-900 dark:text-zinc-100'
+                          : 'text-zinc-400 dark:text-zinc-500'
+                      }`}
+                    >
+                      {idx + 1}
+                    </span>
+                  </td>
+
+                  {/* Team name */}
+                  <td className="px-1 sm:px-3 py-2 sm:py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-black text-[13px] sm:text-lg ${getTeamTextColor(team.team)}`}>
+                        {team.team}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Stats */}
+                  {[team.played, team.won, team.drawn, team.lost, team.goalsFor, team.goalsAgainst].map(
+                    (val, i) => (
+                      <td key={i} className="px-1.5 sm:px-3 py-2 sm:py-3 whitespace-nowrap text-[13px] sm:text-base font-semibold text-zinc-700 dark:text-zinc-300 text-center">
+                        {val}
+                      </td>
+                    )
                   )}
-                  <span className="pl-1">{idx + 1}</span>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="flex items-center gap-3">
-                    <span className={`font-bold text-sm sm:text-base ${getTeamTextColor(team.team)}`}>{team.team}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.played}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.won}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.drawn}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.lost}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.goalsFor}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.goalsAgainst}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-[#e8eaed] text-center">{team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-[#e8eaed] text-center">{team.points}</td>
-              </tr>
-            ))}
+
+                  {/* GD */}
+                  <td className="px-1.5 sm:px-3 py-2 sm:py-3 whitespace-nowrap text-[13px] sm:text-sm text-center">
+                    <span
+                      className={
+                        `text-xs sm:text-base ${team.goalDifference > 0
+                          ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                          : team.goalDifference < 0
+                          ? 'text-red-500 dark:text-red-400 font-semibold'
+                          : 'text-zinc-500 dark:text-zinc-400 font-semibold'}`
+                      }
+                    >
+                      {team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}
+                    </span>
+                  </td>
+
+                  <td className="px-1.5 sm:px-3 py-2 sm:py-3 whitespace-nowrap text-center">
+                    <span
+                      className={`font-display text-base sm:text-xl ${
+                        isFirst
+                          ? 'text-zinc-900 dark:text-zinc-100'
+                          : 'text-zinc-900 dark:text-zinc-100'
+                      }`}
+                    >
+                      {team.points}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-      <div className="px-4 py-3 border-t border-gray-100 dark:border-[#3c4043] flex items-center gap-2 text-xs text-gray-500 dark:text-[#9aa0a6]">
-        <div className="w-2 h-2 rounded-sm bg-emerald-500"></div>
-        <span>Top 2 teams qualify for the Semi-Finals</span>
+
+      <div className="px-4 py-2.5 border-t border-zinc-200 dark:border-zinc-800/60 flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 bg-zinc-50/80 dark:bg-zinc-900/30">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-zinc-400" aria-hidden="true" />
+          <span>Qualifies for Semi-Finals</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-zinc-900 dark:bg-zinc-100" aria-hidden="true" />
+          <span>Group Leader</span>
+        </div>
       </div>
     </div>
   );

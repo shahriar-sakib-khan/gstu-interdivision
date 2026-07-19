@@ -1,90 +1,177 @@
 import { PlayerStat } from '../lib/types';
 import { getTeamTextColor } from '../lib/utils';
 
+// Rank medal for top 3
+const RankBadge = ({ rank }: { rank: number }) => {
+  if (rank === 1) return <span className="text-lg" aria-label="1st place">🥇</span>;
+  if (rank === 2) return <span className="text-lg" aria-label="2nd place">🥈</span>;
+  if (rank === 3) return <span className="text-lg" aria-label="3rd place">🥉</span>;
+  return <span className="font-display text-sm text-zinc-400 dark:text-zinc-500 w-5 text-center">{rank}</span>;
+};
+
+// Helper for dense ranking
+function getDenseRanks<T>(items: T[], getScore: (item: T) => number): Map<T, number> {
+  const rankMap = new Map<T, number>();
+  let currentRank = 0;
+  let currentScore = -1;
+
+  items.forEach((item) => {
+    const score = getScore(item);
+    if (score !== currentScore) {
+      currentRank++;
+      currentScore = score;
+    }
+    rankMap.set(item, currentRank);
+  });
+
+  return rankMap;
+}
+
 export default function TopStats({ stats }: { stats: PlayerStat[] }) {
   const topScorers = [...stats]
-    .filter(s => s.goals > 0)
+    .filter((s) => s.goals > 0)
     .sort((a, b) => b.goals - a.goals);
 
   const topMotms = [...stats]
-    .filter(s => (s.motms || 0) > 0)
+    .filter((s) => (s.motms || 0) > 0)
     .sort((a, b) => (b.motms || 0) - (a.motms || 0));
 
+  const scorerRanks = getDenseRanks(topScorers, (s) => s.goals);
+  const motmRanks = getDenseRanks(topMotms, (s) => s.motms || 0);
+
   return (
-    <div className="flex flex-col gap-6">
-      {/* Top Scorers */}
-      <div className="bg-white dark:bg-[#303134] rounded-2xl border border-gray-200 dark:border-[#3c4043] overflow-hidden shadow-sm">
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-[#3c4043]">
-          <h3 className="font-semibold text-gray-900 dark:text-[#e8eaed]">Top Scorers</h3>
+    <div className="flex flex-col gap-4">
+      {/* ── Top Scorers ── */}
+      <section
+        className="rounded-xl border border-zinc-200 dark:border-zinc-800/80 overflow-hidden shadow-sm glass-card"
+        aria-labelledby="top-scorers-heading"
+      >
+        {/* Header */}
+        <div className="px-3 py-2.5 border-b border-zinc-200 dark:border-zinc-800/80 flex items-center gap-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+          <span className="text-lg" aria-hidden="true">⚽</span>
+          <h2 id="top-scorers-heading" className="font-display text-base text-zinc-800 dark:text-zinc-200 tracking-wide">
+            Top Scorers
+          </h2>
         </div>
-        
-        <div className="px-4 py-2 border-b border-gray-100 dark:border-[#3c4043] flex justify-between text-xs text-gray-500 dark:text-[#9aa0a6]">
+
+        {/* Column labels */}
+        <div className="px-3 py-1.5 border-b border-zinc-100 dark:border-zinc-800/40 flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
           <span>Player</span>
           <span>Goals</span>
         </div>
 
-        <div className="flex flex-col divide-y divide-gray-100 dark:divide-[#3c4043]">
+        <div className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800/40">
           {topScorers.length === 0 ? (
-            <div className="px-4 py-6 text-center text-sm text-gray-500">No goals scored yet</div>
+            <div className="px-3 py-6 text-center text-xs text-zinc-400 dark:text-zinc-500">
+              No goals scored yet
+            </div>
           ) : (
-            topScorers.map((player, idx) => (
-              <div key={`${player.name}-${player.team}-goal`} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#3c4043] transition-colors">
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-400 dark:text-[#9aa0a6] text-sm w-4">{idx + 1}</span>
+            topScorers.map((player) => {
+              const rank = scorerRanks.get(player)!;
+              const isFirst = rank === 1;
+
+              return (
+                <div
+                  key={`${player.name}-${player.team}-goal`}
+                  className={`flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 ${isFirst ? 'bg-zinc-50 dark:bg-zinc-800/60' : ''}`}
+                >
+                  {/* Left: rank + player info */}
                   <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-7">
+                      <RankBadge rank={rank} />
+                    </div>
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-[#e8eaed] text-sm">{player.name}</div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <div className={`text-xs font-medium ${getTeamTextColor(player.team)}`}>{player.team}</div>
+                      <div className={`font-black text-[13px] sm:text-lg ${isFirst ? 'text-amber-600 dark:text-amber-500 shimmer-gold-text' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                        {player.name}
+                      </div>
+                      <div className={`text-[11px] sm:text-sm font-bold mt-0.5 ${getTeamTextColor(player.team)}`}>
+                        {player.team}
                       </div>
                     </div>
                   </div>
+
+                  {/* Right: goal count */}
+                    <div
+                      className={`
+                        font-display text-xl sm:text-4xl leading-none min-w-[2rem] text-right
+                        ${isFirst ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}
+                      `}
+                    >
+                    {player.goals}
+                  </div>
                 </div>
-                <div className="flex items-center justify-center w-8">
-                  <div className="font-bold text-lg text-gray-900 dark:text-gray-200">{player.goals}</div>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
-      </div>
+      </section>
 
-      {/* Most MOTMs */}
-      <div className="bg-white dark:bg-[#303134] rounded-2xl border border-gray-200 dark:border-[#3c4043] overflow-hidden shadow-sm">
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-[#3c4043]">
-          <h3 className="font-semibold text-gray-900 dark:text-[#e8eaed]">Most Man of the Matches</h3>
+      {/* ── Man of the Match ── */}
+      <section
+        className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 overflow-hidden shadow-sm glass-card"
+        aria-labelledby="motm-heading"
+      >
+        {/* Header */}
+        <div className="px-3 py-2.5 border-b border-zinc-200 dark:border-zinc-800/80 flex items-center gap-2 bg-zinc-50/50 dark:bg-zinc-800/30">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-zinc-900 dark:fill-zinc-100 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+          </svg>
+          <h2 id="motm-heading" className="font-display text-base text-zinc-800 dark:text-zinc-200 tracking-wide">
+            Man of the Match
+          </h2>
         </div>
-        
-        <div className="px-4 py-2 border-b border-gray-100 dark:border-[#3c4043] flex justify-between text-xs text-gray-500 dark:text-[#9aa0a6]">
+
+        {/* Column labels */}
+        <div className="px-3 py-1.5 border-b border-zinc-100 dark:border-zinc-800/40 flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
           <span>Player</span>
-          <span>MOTMs</span>
+          <span>Awards</span>
         </div>
 
-        <div className="flex flex-col divide-y divide-gray-100 dark:divide-[#3c4043]">
+        <div className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800/40">
           {topMotms.length === 0 ? (
-            <div className="px-4 py-6 text-center text-sm text-gray-500">No MOTMs awarded yet</div>
+            <div className="px-3 py-6 text-center text-xs text-zinc-400 dark:text-zinc-500">
+              No awards yet
+            </div>
           ) : (
-            topMotms.map((player, idx) => (
-              <div key={`${player.name}-${player.team}-motm`} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#3c4043] transition-colors">
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-400 dark:text-[#9aa0a6] text-sm w-4">{idx + 1}</span>
+            topMotms.map((player) => {
+              const rank = motmRanks.get(player)!;
+              const isFirst = rank === 1;
+
+              return (
+                <div
+                  key={`${player.name}-${player.team}-motm`}
+                  className={`flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40 ${isFirst ? 'bg-zinc-50 dark:bg-zinc-800/60' : ''}`}
+                >
+                  {/* Left: rank + player info */}
                   <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-7">
+                      <RankBadge rank={rank} />
+                    </div>
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-[#e8eaed] text-sm">{player.name}</div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <div className={`text-xs font-medium ${getTeamTextColor(player.team)}`}>{player.team}</div>
+                      <div className={`font-black text-[13px] sm:text-lg ${isFirst ? 'text-amber-600 dark:text-amber-500 shimmer-gold-text' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                        {player.name}
+                      </div>
+                      <div className={`text-[11px] sm:text-sm font-bold mt-0.5 ${getTeamTextColor(player.team)}`}>
+                        {player.team}
                       </div>
                     </div>
                   </div>
+
+                  {/* Right: MOTM count */}
+                    <div
+                      className={`
+                        font-display text-xl sm:text-4xl leading-none min-w-[2rem] text-right
+                        ${isFirst ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}
+                      `}
+                    >
+                    {player.motms}
+                  </div>
                 </div>
-                <div className="flex items-center justify-center w-8">
-                  <div className="font-bold text-lg text-gray-900 dark:text-gray-200">{player.motms}</div>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

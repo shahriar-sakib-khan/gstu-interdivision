@@ -21,7 +21,7 @@ export const MATCHES: Match[] = [
     status: 'FULL_TIME',
     homeScore: 1,
     awayScore: 0,
-    homeGoals: [{ playerName: 'Sagor (OG)', count: 1 }],
+    homeGoals: [{ playerName: 'Chayan (OG)', count: 1 }],
     motm: 'Sakib',
   },
   {
