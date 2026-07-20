@@ -69,7 +69,13 @@ export default function MatchCard({ match }: { match: Match }) {
       {/* ── Card header: time + status ── */}
       <div className={`px-2.5 sm:px-4 py-1.5 sm:py-2.5 flex justify-between items-center border-b border-zinc-200/60 dark:border-zinc-800/60 ${isKnockout ? 'bg-white/40 dark:bg-zinc-900/20' : ''}`}>
         <span className="text-xs sm:text-sm font-bold text-zinc-500 dark:text-zinc-400">
-          Match {match.id} &bull; {match.time !== 'TBD' ? match.time : '⏰ TBD'}
+          Match {match.id} {match.status === 'POSTPONED' ? (
+            <span className="text-[10px] sm:text-xs text-amber-500 dark:text-amber-400 ml-1">
+              &bull; Postponed due to rain
+            </span>
+          ) : (
+            <span>&bull; {match.time !== 'TBD' ? match.time : '⏰ TBD'}</span>
+          )}
         </span>
 
         {isFullTime ? (
@@ -84,6 +90,12 @@ export default function MatchCard({ match }: { match: Match }) {
             border border-red-200/50 dark:border-red-700/30 uppercase tracking-widest">
             <span className="live-dot" aria-hidden="true" />
             LIVE
+          </span>
+        ) : match.status === 'POSTPONED' ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 rounded-full text-xs sm:text-sm font-bold
+            bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500
+            border border-amber-200/50 dark:border-amber-700/30 uppercase tracking-widest">
+            Postponed
           </span>
         ) : (
           <span className="text-xs sm:text-sm font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">

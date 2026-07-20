@@ -87,7 +87,7 @@ export const MATCHES: Match[] = [
     time: '3:30 PM',
     homeTeam: 'Rangpur',
     awayTeam: 'Khulna',
-    status: 'SCHEDULED',
+    status: 'POSTPONED',
   },
   {
     id: '7',
@@ -95,7 +95,7 @@ export const MATCHES: Match[] = [
     time: '4:30 PM',
     homeTeam: 'Chattogram',
     awayTeam: 'Mymensingh',
-    status: 'SCHEDULED',
+    status: 'POSTPONED',
   },
   {
     id: '8',

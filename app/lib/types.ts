@@ -11,7 +11,7 @@ export interface Match {
   awayTeam: string;
   homeScore?: number;
   awayScore?: number;
-  status: 'SCHEDULED' | 'LIVE' | 'FULL_TIME';
+  status: 'SCHEDULED' | 'LIVE' | 'FULL_TIME' | 'POSTPONED';
   homeGoals?: Goal[];
   awayGoals?: Goal[];
   motm?: string;
