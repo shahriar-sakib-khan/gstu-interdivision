@@ -47,7 +47,7 @@ export default function StandingsTable({ standings }: { standings: Standing[] })
                     {/* Qualifying stripe */}
                     {qualifies && (
                       <div
-                        className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full ${isFirst ? 'bg-zinc-900 dark:bg-zinc-100' : 'bg-zinc-400'}`}
+                        className={`absolute left-0 top-0 bottom-0 w-0.75 rounded-r-full ${isFirst ? 'bg-zinc-900 dark:bg-zinc-100' : 'bg-zinc-400'}`}
                         aria-hidden="true"
                       />
                     )}

@@ -108,7 +108,7 @@ export default function MatchCard({ match }: { match: Match }) {
       <div className="px-2 sm:px-4 py-2 sm:py-5 flex flex-row items-center justify-between gap-1 sm:gap-3">
         {/* Home team */}
         <div className="flex-1 flex flex-col items-start text-left min-w-0">
-          <span className={`font-black text-base sm:text-3xl leading-tight break-words ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.homeTeam)}`}>
+          <span className={`font-black text-base sm:text-3xl leading-tight wrap-break-word ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.homeTeam)}`}>
             {match.homeTeam}
           </span>
         </div>
@@ -138,7 +138,7 @@ export default function MatchCard({ match }: { match: Match }) {
 
         {/* Away team */}
         <div className="flex-1 flex flex-col items-end text-right min-w-0">
-          <span className={`font-black text-base sm:text-3xl leading-tight break-words ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.awayTeam)}`}>
+          <span className={`font-black text-base sm:text-3xl leading-tight wrap-break-word ${isKnockout ? 'sm:text-4xl' : ''} ${getTeamTextColor(match.awayTeam)}`}>
             {match.awayTeam}
           </span>
         </div>

@@ -93,7 +93,7 @@ export default function TopStats({ stats }: { stats: PlayerStat[] }) {
                   {/* Right: goal count */}
                     <div
                       className={`
-                        font-display text-xl sm:text-4xl leading-none min-w-[2rem] text-right
+                        font-display text-xl sm:text-4xl leading-none min-w-8 text-right
                         ${isFirst ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}
                       `}
                     >
@@ -160,7 +160,7 @@ export default function TopStats({ stats }: { stats: PlayerStat[] }) {
                   {/* Right: MOTM count */}
                     <div
                       className={`
-                        font-display text-xl sm:text-4xl leading-none min-w-[2rem] text-right
+                        font-display text-xl sm:text-4xl leading-none min-w-8 text-right
                         ${isFirst ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}
                       `}
                     >
