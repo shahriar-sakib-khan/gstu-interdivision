@@ -20,7 +20,7 @@ export default function Header({ scrolled = false }: { scrolled?: boolean }) {
     <div
       className={`grid transition-all duration-300 ease-in-out ${
         scrolled
-          ? 'grid-rows-[0fr] opacity-0 pointer-events-none'
+          ? 'grid-rows-[0fr] opacity-0 pointer-events-none sm:grid-rows-[1fr] sm:opacity-100 sm:pointer-events-auto'
           : 'grid-rows-[1fr] opacity-100'
       }`}
     >
@@ -57,7 +57,7 @@ export default function Header({ scrolled = false }: { scrolled?: boolean }) {
                   <h1 className="font-display font-black text-2xl sm:text-4xl tracking-wide leading-none text-zinc-900 dark:text-zinc-100">
                     GSTU
                   </h1>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     <span className="text-[9px] opacity-70" aria-hidden="true">🏆</span>
                     <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400">
                       Inter-Divisional Football Tournament 2026

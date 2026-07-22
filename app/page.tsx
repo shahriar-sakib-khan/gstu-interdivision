@@ -7,6 +7,10 @@ const formatDate = (dateStr: string) => {
 };
 
 export default function Home() {
+  const completedMatches = MATCHES.filter((m) => m.status === 'FULL_TIME').length;
+  const totalGroupMatches = MATCHES.filter((m) => m.homeTeam !== 'TBD').length;
+  const progressPercent = Math.round((completedMatches / totalGroupMatches) * 100);
+
   const matchesByDate = MATCHES.reduce((acc, match) => {
     if (!acc[match.date]) acc[match.date] = [];
     acc[match.date].push(match);
@@ -15,6 +19,27 @@ export default function Home() {
 
   return (
     <main className="max-w-3xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-8">
+      {/* ── Tournament Match Progress Strip ── */}
+      <div className="flex items-center justify-between px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/60 dark:bg-zinc-900/40 glass-card">
+        <div className="flex items-center gap-2">
+          <span className="text-sm sm:text-base" aria-hidden="true">⚽</span>
+          <span className="text-xs sm:text-sm font-bold text-zinc-700 dark:text-zinc-300">
+            Tournament Progress
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <span className="font-display text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-wide">
+            {completedMatches} of {totalGroupMatches} Matches Completed
+          </span>
+          <div className="w-14 sm:w-20 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden shrink-0">
+            <div
+              className="h-full bg-zinc-900 dark:bg-zinc-100 rounded-full transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {Object.entries(matchesByDate).map(([date, matches]) => (
         <section key={date} aria-labelledby={`date-heading-${date}`}>
           <div className="flex items-center gap-4 mb-3 sm:mb-6 sticky top-11.25 sm:top-13.25 z-30 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-1.5 sm:py-2 border-y border-zinc-200 dark:border-zinc-800">
